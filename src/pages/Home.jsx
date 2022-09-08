@@ -1,29 +1,50 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { fetchPostsByTag, fetchPosts, fetchTags } from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const { posts, tags } = useSelector((state) => state.posts);
   const { data } = useSelector((state) => state.user);
+  const [activeTab, setActiveTab] = useState(0);
+  const { tagname } = useParams();
+
   useEffect(() => {
-    dispatch(fetchPosts());
+    dispatch(fetchPosts(0));
     dispatch(fetchTags());
   }, []);
+
+  useEffect(() => {
+    if (tagname) {
+      console.log(tagname);
+      dispatch(fetchPostsByTag({ activeTab, tagname }));
+    }
+  }, [tagname]);
+
+  const tabChange = async (e, val) => {
+    setActiveTab(val);
+    console.log(activeTab);
+    tagname ? dispatch(fetchPostsByTag({ val, tagname })) : dispatch(fetchPosts(val));
+  };
 
   const isPostLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
 
   return (
     <>
-      <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
+      <Tabs
+        style={{ marginBottom: 15 }}
+        value={activeTab}
+        onChange={tabChange}
+        aria-label="basic tabs example">
         <Tab label="Новые" />
         <Tab label="Популярные" />
       </Tabs>

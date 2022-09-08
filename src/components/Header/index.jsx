@@ -6,6 +6,8 @@ import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAuthType, logout } from '../../redux/slices/auth';
+import { IconButton } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export const Header = () => {
   const isAuth = useSelector(isAuthType);
@@ -29,11 +31,22 @@ export const Header = () => {
             {isAuth ? (
               <>
                 <Link to="/add-post">
-                  <Button variant="contained">Написать статью</Button>
+                  <Button size="medium" variant="contained">
+                    Написать статью
+                  </Button>
                 </Link>
-                <Button onClick={onClickLogout} variant="contained" color="error">
+                <Button onClick={onClickLogout} size="medium" variant="contained" color="error">
                   Выйти
                 </Button>
+                <Link to="/profile">
+                  <IconButton
+                    size="large"
+                    edge="end"
+                    aria-label="account of current user"
+                    color="inherit">
+                    <AccountCircleIcon />
+                  </IconButton>
+                </Link>
               </>
             ) : (
               <>
